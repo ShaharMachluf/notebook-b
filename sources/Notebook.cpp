@@ -35,7 +35,7 @@ void Notebook::write(unsigned int page, unsigned int row, unsigned int column, D
             this->pages.at(page).at(row).at(column+i) == to_write.at(i);
         }
     } 
-    if(direction == Direction::Vertical){
+    else if(direction == Direction::Vertical){
         for(int i=0; i<to_write.length(); i++){
             if(this->pages.find(page) == this->pages.end() || this->pages.at(page).find(row + i) == this->pages.at(page).end()){
                 fill(this->pages.at(page).at(row + i).at(LINE_START), this->pages.at(page).at(row + i).at(LINE_LEN - 1), '_'); //initialize vector with '_'
@@ -53,7 +53,35 @@ void Notebook::write(unsigned int page, unsigned int row, unsigned int column, D
 }
 
 string Notebook::read(unsigned int page, unsigned int row, unsigned int column, Direction direction, int to_read) const{
-    return("ok");
+    string result = ""; 
+    if(column >= 100 || (direction == Direction::Horizontal && column + to_read >= 100)){
+        throw("A line has only 100 columns");
+    }
+    if(direction == Direction::Horizontal){
+        //if the key "row" or "page" are not in the map 
+        if(this->pages.find(page) == this->pages.end() || this->pages.at(page).find(row) == this->pages.at(page).end()){
+            for(int i = 0; i< to_read; i++){
+                result += '_';
+            }
+        }
+        else{
+            for(int i = 0; i< to_read; i++){
+                result += this->pages.at(page).at(row).at(column+i);
+            }
+        } 
+    }
+    else if(direction == Direction::Vertical){
+        for(int i = 0; i < to_read; i++){
+            //if the key "row" or "page" are not in the map 
+            if(this->pages.find(page) == this->pages.end() || this->pages.at(page).find(row + i) == this->pages.at(page).end()){
+                result += '_\n';
+            
+            }else{
+                result += this->pages.at(page).at(row + i).at(column) + "\n";
+            }
+        }
+    }
+    return(result);
 }
 
 void Notebook::erase(unsigned int page, unsigned int row, unsigned int column, Direction direction, int to_erase) const{
