@@ -12,11 +12,9 @@ namespace ariel{
     class Notebook{
         unordered_map<int, unordered_map<int, vector<char>>> pages;
         public:
-        Notebook();
-        void write(unsigned int, unsigned int, unsigned int, Direction, string const &) const;
-        string read(unsigned int, unsigned int, unsigned int, Direction, int) const;
-        void erase(unsigned int, unsigned int, unsigned int, Direction, int) const;
-        void show(unsigned int) const;
-        ~Notebook();
+        void write(int, int, int, Direction, string const &);
+        string read(int, int, int, Direction, int) const;
+        void erase(int, int, int, Direction, int);
+        void show(int) const;
     };
 };
