@@ -19,12 +19,12 @@ void Notebook::write(int page, int row, int column, Direction direction, string 
         throw("String contains illigal char");
     }
     if(direction == Direction::Horizontal){
-        if(this->pages.find(page) == this->pages.end()){
+        if(this->pages.find(page) == this->pages.end()){ //page is not in the map
             vector <char> vec(line_len, '_');
             unordered_map<int, vector<char>> m;
             m[row] = vec;
             this->pages[page] = m;
-        } else if(this->pages.at(page).find(row) == this->pages.at(page).end()){
+        } else if(this->pages.at(page).find(row) == this->pages.at(page).end()){ //row is not in the map
             vector <char> vec(line_len, '_');
             this->pages.at(page)[row] = vec;
         }
@@ -39,18 +39,14 @@ void Notebook::write(int page, int row, int column, Direction direction, string 
     } 
     else if(direction == Direction::Vertical){
         for(int i=0; i<to_write.length(); i++){
-            if(this->pages.find(page) == this->pages.end()){
-                cout<<"5"<<endl;
+            if(this->pages.find(page) == this->pages.end()){ //page is not in the map
                 vector <char> vec(line_len, '_');
                 unordered_map<int, vector<char>> m;
                 m[row + i] = vec;
-                cout<<"6"<<endl;
                 this->pages[page] = m;
-                cout<<"7"<<endl;
-            } else if(this->pages.at(page).find(row + i) == this->pages.at(page).end()){
+            } else if(this->pages.at(page).find(row + i) == this->pages.at(page).end()){ //row is not in the map
                 vector <char> vec(line_len, '_');
                 this->pages.at(page)[row + i] = vec;
-                cout<<"8"<<endl;
             }
         }
         for(int i=0; i<to_write.length(); i++){ //check errors
@@ -101,12 +97,12 @@ void Notebook::erase(int page, int row, int column, Direction direction, int to_
         throw("A line has only 100 columns");
     }
     if(direction == Direction::Horizontal){
-        if(this->pages.find(page) == this->pages.end()){
+        if(this->pages.find(page) == this->pages.end()){ //page is not in the map
             vector <char> vec(line_len, '_');
             unordered_map<int, vector<char>> m;
             m[row] = vec;
             this->pages[page] = m;
-        } else if(this->pages.at(page).find(row) == this->pages.at(page).end()){
+        } else if(this->pages.at(page).find(row) == this->pages.at(page).end()){ //row is not in the map
             vector <char> vec(line_len, '_');
             this->pages.at(page)[row] = vec;
         } 
@@ -116,18 +112,14 @@ void Notebook::erase(int page, int row, int column, Direction direction, int to_
     } 
     else if(direction == Direction::Vertical){
         for(int i=0; i<to_erase; i++){
-            if(this->pages.find(page) == this->pages.end()){
-                cout<<"5"<<endl;
+            if(this->pages.find(page) == this->pages.end()){ //page is not in the map
                 vector <char> vec(line_len, '_');
                 unordered_map<int, vector<char>> m;
                 m[row + i] = vec;
-                cout<<"6"<<endl;
                 this->pages[page] = m;
-                cout<<"7"<<endl;
-            } else if(this->pages.at(page).find(row + i) == this->pages.at(page).end()){
+            } else if(this->pages.at(page).find(row + i) == this->pages.at(page).end()){ //row is not in the map
                 vector <char> vec(line_len, '_');
                 this->pages.at(page)[row + i] = vec;
-                cout<<"8"<<endl;
             }
         }
         for(int i=0; i<to_erase; i++){ //erase the string in the notebook
