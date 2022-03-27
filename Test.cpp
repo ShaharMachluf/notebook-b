@@ -58,11 +58,11 @@ TEST_CASE("Write"){
     CHECK_NOTHROW(notebook.write(1, 5, 1, Direction::Horizontal, "abcd"));
     CHECK_NOTHROW(notebook.write(1, 5, 9, Direction::Horizontal, "abcd"));
     CHECK_THROWS(notebook.write(1, 5, 5, Direction::Vertical, "abcd"));
+    notebook.write(1, 2, 5, Direction::Vertical, "abc");
     CHECK_THROWS(notebook.write(1, 4, 5, Direction::Horizontal, "abcd"));
     CHECK_THROWS(notebook.write(1, 3, 5, Direction::Horizontal, "abcd"));
     CHECK_THROWS(notebook.write(1, 2, 5, Direction::Horizontal, "abcd"));
     CHECK_THROWS(notebook.write(1, 5, 8, Direction::Horizontal, "abcd"));
-    CHECK_NOTHROW(notebook.write(1, 5, 0, Direction::Horizontal, "abcd"));
     CHECK_NOTHROW(notebook.write(1, 5, 13, Direction::Horizontal, "abcd"));
 }
 

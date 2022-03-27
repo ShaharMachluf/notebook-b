@@ -4,15 +4,15 @@
 #include "Direction.hpp"
 #include "Notebook.hpp"
 
-#define LINE_LEN 100
-#define LINE_START 0
+constexpr int line_len=100;
+constexpr int line_start=0;
 
 using ariel::Direction;
 using namespace std;
 using namespace ariel;
 
 void Notebook::write(int page, int row, int column, Direction direction, string const &to_write){
-    if(column >= 100 || (direction == Direction::Horizontal && (unsigned long)column + to_write.length() >= 100)){
+    if(column >= line_len || (direction == Direction::Horizontal && (unsigned long)column + to_write.length() >= line_len)){
         throw("A line has only 100 columns");
     }
     if (to_write.find('~') != string::npos || to_write.find('\n') != string::npos || to_write.find('\r') != string::npos){
@@ -20,14 +20,13 @@ void Notebook::write(int page, int row, int column, Direction direction, string 
     }
     if(direction == Direction::Horizontal){
         if(this->pages.find(page) == this->pages.end()){
-            vector <char> vec(LINE_LEN, '_');
+            vector <char> vec(line_len, '_');
             unordered_map<int, vector<char>> m;
-            m.at(row) = vec;
-            this->pages.at(page) = m;
-            //fill(this->pages.at(page).at(row).at(LINE_START), this->pages.at(page).at(row).at(LINE_LEN - 1), '_'); //initialize vector with '_'
+            m[row] = vec;
+            this->pages[page] = m;
         } else if(this->pages.at(page).find(row) == this->pages.at(page).end()){
-            vector <char> vec(LINE_LEN, '_');
-            this->pages.at(page).at(row) = vec;
+            vector <char> vec(line_len, '_');
+            this->pages.at(page)[row] = vec;
         }
         for(int i=0; i<to_write.length(); i++){ //check errors
             if(this->pages.at(page).at(row).at((size_t)(column+i)) != '_'){
@@ -41,16 +40,18 @@ void Notebook::write(int page, int row, int column, Direction direction, string 
     else if(direction == Direction::Vertical){
         for(int i=0; i<to_write.length(); i++){
             if(this->pages.find(page) == this->pages.end()){
-                vector <char> vec(LINE_LEN, '_');
+                cout<<"5"<<endl;
+                vector <char> vec(line_len, '_');
                 unordered_map<int, vector<char>> m;
-                m.at(row) = vec;
-                this->pages.at(page) = m;
-            //fill(this->pages.at(page).at(row).at(LINE_START), this->pages.at(page).at(row).at(LINE_LEN - 1), '_'); //initialize vector with '_'
-            } else if(this->pages.at(page).find(row) == this->pages.at(page).end()){
-                vector <char> vec(LINE_LEN, '_');
-                this->pages.at(page).at(row) = vec;
+                m[row + i] = vec;
+                cout<<"6"<<endl;
+                this->pages[page] = m;
+                cout<<"7"<<endl;
+            } else if(this->pages.at(page).find(row + i) == this->pages.at(page).end()){
+                vector <char> vec(line_len, '_');
+                this->pages.at(page)[row + i] = vec;
+                cout<<"8"<<endl;
             }
-                //fill(this->pages.at(page).at(row + i).at(LINE_START), this->pages.at(page).at(row + i).at(LINE_LEN - 1), '_'); //initialize vector with '_'
         }
         for(int i=0; i<to_write.length(); i++){ //check errors
             if(this->pages.at(page).at(row+i).at((size_t)column) != '_'){
@@ -64,8 +65,8 @@ void Notebook::write(int page, int row, int column, Direction direction, string 
 }
 
 string Notebook::read(int page, int row, int column, Direction direction, int to_read) const{
-    string result = ""; 
-    if(column >= 100 || (direction == Direction::Horizontal && column + to_read >= 100)){
+    string result; 
+    if(column >= line_len || (direction == Direction::Horizontal && column + to_read >= line_len)){
         throw("A line has only 100 columns");
     }
     if(direction == Direction::Horizontal){
@@ -96,17 +97,18 @@ string Notebook::read(int page, int row, int column, Direction direction, int to
 }
 
 void Notebook::erase(int page, int row, int column, Direction direction, int to_erase){
-        if(column >= 100 || (direction == Direction::Horizontal && column + to_erase >= 100)){
+        if(column >= line_len || (direction == Direction::Horizontal && column + to_erase >= line_len)){
         throw("A line has only 100 columns");
     }
     if(direction == Direction::Horizontal){
-        if(this->pages.find(page) == this->pages.end() || this->pages.at(page).find(row) == this->pages.at(page).end()){
-            // this->pages.at(page).at(row) = vec(LINE_LEN, '_');
-            vector <char> vec(LINE_LEN, '_');
+        if(this->pages.find(page) == this->pages.end()){
+            vector <char> vec(line_len, '_');
             unordered_map<int, vector<char>> m;
-            m.at(row) = vec;
-            this->pages.at(page) = m;
-            //fill(this->pages.at(page).at(row).at(LINE_START), this->pages.at(page).at(row).at(LINE_LEN - 1), '_'); //initialize vector with '_'
+            m[row] = vec;
+            this->pages[page] = m;
+        } else if(this->pages.at(page).find(row) == this->pages.at(page).end()){
+            vector <char> vec(line_len, '_');
+            this->pages.at(page)[row] = vec;
         } 
         for(int i=0; i<to_erase; i++){ //erase the string in the notebook
             this->pages.at(page).at(row).at((size_t)(column+i)) = '~';
@@ -114,13 +116,19 @@ void Notebook::erase(int page, int row, int column, Direction direction, int to_
     } 
     else if(direction == Direction::Vertical){
         for(int i=0; i<to_erase; i++){
-            if(this->pages.find(page) == this->pages.end() || this->pages.at(page).find(row + i) == this->pages.at(page).end()){
-                vector <char> vec(LINE_LEN, '_');
+            if(this->pages.find(page) == this->pages.end()){
+                cout<<"5"<<endl;
+                vector <char> vec(line_len, '_');
                 unordered_map<int, vector<char>> m;
-                m.at(row) = vec;
-                this->pages.at(page) = m;
-                //fill(this->pages.at(page).at(row + i).at(LINE_START), this->pages.at(page).at(row + i).at(LINE_LEN - 1), '_'); //initialize vector with '_'
-            } 
+                m[row + i] = vec;
+                cout<<"6"<<endl;
+                this->pages[page] = m;
+                cout<<"7"<<endl;
+            } else if(this->pages.at(page).find(row + i) == this->pages.at(page).end()){
+                vector <char> vec(line_len, '_');
+                this->pages.at(page)[row + i] = vec;
+                cout<<"8"<<endl;
+            }
         }
         for(int i=0; i<to_erase; i++){ //erase the string in the notebook
             this->pages.at(page).at(row + i).at((size_t)column) = '~';
@@ -129,11 +137,11 @@ void Notebook::erase(int page, int row, int column, Direction direction, int to_
 }
 
 void Notebook::show(int page) const{
-    int min_width = LINE_LEN - 1;
+    int min_width = line_len - 1;
     int min_hight = UINT16_MAX;
-    int max_width = LINE_START;
-    int max_hight = LINE_START;
-    string to_show = "";
+    int max_width = line_start;
+    int max_hight = line_start;
+    string to_show;
     if(this->pages.find(page) == this->pages.end()){  //the page is empty
         cout<<"_____\n_____\n_____\n_____\n_____"<<endl;
     }
@@ -145,7 +153,7 @@ void Notebook::show(int page) const{
             } else if(i.first > max_hight){
                 max_hight = i.first;
             }
-            for(int j=LINE_START; j<LINE_LEN;j++){
+            for(int j=line_start; j<line_len;j++){
                 if(i.second.at((size_t)j) != '_' && j < min_width){
                     min_width = j;
                 } else if(i.second.at((size_t)j) != '_' && j > max_width){
