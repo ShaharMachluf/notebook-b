@@ -12,11 +12,11 @@ using namespace std;
 using namespace ariel;
 
 void Notebook::write(int page, int row, int column, Direction direction, string const &to_write){
-    if(column >= line_len || (direction == Direction::Horizontal && (unsigned long)column + to_write.length() >= line_len)){
-        throw("A line has only 100 columns");
+    if(page < 0 || row < 0 || column < 0){
+        throw("All numbers must be positive");
     }
-    if (to_write.find('~') != string::npos || to_write.find('\n') != string::npos || to_write.find('\r') != string::npos){
-        throw("String contains illigal char");
+    if(column >= line_len || (direction == Direction::Horizontal && (unsigned long)column + to_write.length() > line_len)){
+        throw("A line has only 100 columns");
     }
     if(direction == Direction::Horizontal){
         if(this->pages.find(page) == this->pages.end()){ //page is not in the map
@@ -28,9 +28,12 @@ void Notebook::write(int page, int row, int column, Direction direction, string 
             vector <char> vec(line_len, '_');
             this->pages.at(page)[row] = vec;
         }
-        for(int i=0; i<to_write.length(); i++){ //check errors
-            if(this->pages.at(page).at(row).at((size_t)(column+i)) != '_'){
+        for(unsigned int i=0; i<to_write.length(); i++){ //check errors
+            if(this->pages.at(page).at(row).at((size_t)column+i) != '_'){
                 throw("Can't write somewhere that's already written/erased");
+            }
+            if(((int)to_write[i] < 33 && to_write[i] != ' ') || ((int)to_write[i] > 126 && to_write[i] != ' ') || to_write[i] == '~'){
+                throw("String contains illigal char");
             }
         }
         for(int i=0; i<to_write.length(); i++){ //write the string in the notebook
@@ -49,9 +52,12 @@ void Notebook::write(int page, int row, int column, Direction direction, string 
                 this->pages.at(page)[row + i] = vec;
             }
         }
-        for(int i=0; i<to_write.length(); i++){ //check errors
-            if(this->pages.at(page).at(row+i).at((size_t)column) != '_'){
+        for(unsigned int i=0; i<to_write.length(); i++){ //check errors
+            if(this->pages.at(page).at((size_t)row+i).at((size_t)column) != '_'){
                 throw("Can't write somewhere that's already written/erased");
+            }
+            if(((int)to_write[i] < 33 && to_write[i] != ' ') || ((int)to_write[i] > 126 && to_write[i] != ' ') || to_write[i] == '~'){
+                throw("String contains illigal char");
             }
         }
         for(int i=0; i<to_write.length(); i++){ //write the string in the notebook
@@ -62,13 +68,20 @@ void Notebook::write(int page, int row, int column, Direction direction, string 
 
 string Notebook::read(int page, int row, int column, Direction direction, int to_read) const{
     string result; 
-    if(column >= line_len || (direction == Direction::Horizontal && column + to_read >= line_len)){
+    if(page < 0 || row < 0 || column < 0 || to_read < 0){
+        throw("All numbers must be positive");
+    }
+    if(column >= line_len || (direction == Direction::Horizontal && column + to_read > line_len)){
         throw("A line has only 100 columns");
     }
     if(direction == Direction::Horizontal){
         //if the key "row" or "page" are not in the map 
-        if(this->pages.find(page) == this->pages.end() || this->pages.at(page).find(row) == this->pages.at(page).end()){
-            for(int i = 0; i< to_read; i++){
+        if(this->pages.find(page) == this->pages.end()){
+            for(int i = 0; i < to_read; i++){
+                result += '_';
+            }
+        }else if(this->pages.at(page).find(row) == this->pages.at(page).end()){
+            for(int i = 0; i < to_read; i++){
                 result += '_';
             }
         }
@@ -82,10 +95,10 @@ string Notebook::read(int page, int row, int column, Direction direction, int to
         for(int i = 0; i < to_read; i++){
             //if the key "row" or "page" are not in the map 
             if(this->pages.find(page) == this->pages.end() || this->pages.at(page).find(row + i) == this->pages.at(page).end()){
-                result += "_\n";
+                result += "_";
             
             }else{
-                result.append(1, this->pages.at(page).at(row + i).at((size_t)column)) + "\n";
+                result.append(1, this->pages.at(page).at(row + i).at((size_t)column));
             }
         }
     }
@@ -93,7 +106,10 @@ string Notebook::read(int page, int row, int column, Direction direction, int to
 }
 
 void Notebook::erase(int page, int row, int column, Direction direction, int to_erase){
-        if(column >= line_len || (direction == Direction::Horizontal && column + to_erase >= line_len)){
+    if(page < 0 || row < 0 || column < 0 || to_erase < 0){
+        throw("All numbers must be positive");
+    }
+    if(column >= line_len || (direction == Direction::Horizontal && column + to_erase > line_len)){
         throw("A line has only 100 columns");
     }
     if(direction == Direction::Horizontal){
@@ -129,6 +145,9 @@ void Notebook::erase(int page, int row, int column, Direction direction, int to_
 }
 
 void Notebook::show(int page) const{
+    if(page < 0){
+        throw("Page number must be positive");
+    }
     int min_width = line_len - 1;
     int min_hight = UINT16_MAX;
     int max_width = line_start;
