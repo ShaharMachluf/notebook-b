@@ -6,6 +6,8 @@
 
 constexpr int line_len=100;
 constexpr int line_start=0;
+constexpr int first_char = 33;
+constexpr int last_char = 126;
 
 using ariel::Direction;
 using namespace std;
@@ -15,7 +17,7 @@ void Notebook::write(int page, int row, int column, Direction direction, string 
     if(page < 0 || row < 0 || column < 0){
         throw("All numbers must be positive");
     }
-    if(column >= line_len || (direction == Direction::Horizontal && (unsigned long)column + to_write.length() > line_len)){
+    if(column >= line_len || (direction == Direction::Horizontal && unsigned(column) + to_write.length() > line_len)){
         throw("A line has only 100 columns");
     }
     if(direction == Direction::Horizontal){
@@ -29,15 +31,15 @@ void Notebook::write(int page, int row, int column, Direction direction, string 
             this->pages.at(page)[row] = vec;
         }
         for(unsigned int i=0; i<to_write.length(); i++){ //check errors
-            if(this->pages.at(page).at(row).at((size_t)column+i) != '_'){
+            if(this->pages.at(page).at(row).at(unsigned(column)+i) != '_'){
                 throw("Can't write somewhere that's already written/erased");
             }
-            if(((int)to_write[i] < 33 && to_write[i] != ' ') || ((int)to_write[i] > 126 && to_write[i] != ' ') || to_write[i] == '~'){
+            if(((int)to_write[i] < first_char && to_write[i] != ' ') || ((int)to_write[i] > last_char && to_write[i] != ' ') || to_write[i] == '~'){
                 throw("String contains illigal char");
             }
         }
         for(int i=0; i<to_write.length(); i++){ //write the string in the notebook
-            this->pages.at(page).at(row).at((size_t)(column+i)) = to_write.at((size_t)i);
+            this->pages.at(page).at(row).at(unsigned(column+i)) = to_write.at(unsigned(i));
         }
     } 
     else if(direction == Direction::Vertical){
@@ -52,16 +54,16 @@ void Notebook::write(int page, int row, int column, Direction direction, string 
                 this->pages.at(page)[row + i] = vec;
             }
         }
-        for(unsigned int i=0; i<to_write.length(); i++){ //check errors
-            if(this->pages.at(page).at((size_t)row+i).at((size_t)column) != '_'){
+        for(int i=0; i<to_write.length(); i++){ //check errors
+            if(this->pages.at(page).at(row+i).at(unsigned(column)) != '_'){
                 throw("Can't write somewhere that's already written/erased");
             }
-            if(((int)to_write[i] < 33 && to_write[i] != ' ') || ((int)to_write[i] > 126 && to_write[i] != ' ') || to_write[i] == '~'){
+            if(((int)to_write[unsigned(i)] < first_char && to_write[unsigned(i)] != ' ') || ((int)to_write[unsigned(i)] > last_char && to_write[unsigned(i)] != ' ') || to_write[unsigned(i)] == '~'){
                 throw("String contains illigal char");
             }
         }
         for(int i=0; i<to_write.length(); i++){ //write the string in the notebook
-            this->pages.at(page).at(row + i).at((size_t)column) = to_write.at((size_t)i);
+            this->pages.at(page).at(row + i).at(unsigned(column)) = to_write.at(unsigned(i));
         }
     }
 }
@@ -87,7 +89,7 @@ string Notebook::read(int page, int row, int column, Direction direction, int to
         }
         else{
             for(int i = 0; i< to_read; i++){
-                result.append(1, this->pages.at(page).at(row).at((size_t)(column+i)));
+                result.append(1, this->pages.at(page).at(row).at(unsigned(column+i)));
             }
         } 
     }
@@ -98,7 +100,7 @@ string Notebook::read(int page, int row, int column, Direction direction, int to
                 result += "_";
             
             }else{
-                result.append(1, this->pages.at(page).at(row + i).at((size_t)column));
+                result.append(1, this->pages.at(page).at(row + i).at(unsigned(column)));
             }
         }
     }
@@ -123,7 +125,7 @@ void Notebook::erase(int page, int row, int column, Direction direction, int to_
             this->pages.at(page)[row] = vec;
         } 
         for(int i=0; i<to_erase; i++){ //erase the string in the notebook
-            this->pages.at(page).at(row).at((size_t)(column+i)) = '~';
+            this->pages.at(page).at(row).at(unsigned(column+i)) = '~';
         }
     } 
     else if(direction == Direction::Vertical){
@@ -139,7 +141,7 @@ void Notebook::erase(int page, int row, int column, Direction direction, int to_
             }
         }
         for(int i=0; i<to_erase; i++){ //erase the string in the notebook
-            this->pages.at(page).at(row + i).at((size_t)column) = '~';
+            this->pages.at(page).at(row + i).at(unsigned(column)) = '~';
         }
     }
 }
@@ -165,9 +167,9 @@ void Notebook::show(int page) const{
                 max_hight = i.first;
             }
             for(int j=line_start; j<line_len;j++){
-                if(i.second.at((size_t)j) != '_' && j < min_width){
+                if(i.second.at(unsigned(j)) != '_' && j < min_width){
                     min_width = j;
-                } else if(i.second.at((size_t)j) != '_' && j > max_width){
+                } else if(i.second.at(unsigned(j)) != '_' && j > max_width){
                     max_width = j;
                 }
             }
@@ -180,7 +182,7 @@ void Notebook::show(int page) const{
                 }
             } else{
                 for(int j = min_width; j<= max_width; j++){
-                    to_show += m.at(i).at((size_t)j);
+                    to_show += m.at(i).at(unsigned(j));
                 }
             }
             to_show += "\n";
