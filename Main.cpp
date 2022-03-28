@@ -29,8 +29,12 @@ int main(){
                 dir = Direction::Horizontal;
             } else{
                 dir = Direction::Vertical;
+            }try{
+                notebook.write(page, row, column, dir, text);
             }
-            notebook.write(page, row, column, dir, text);
+            catch(const exception& e){
+                cout<<e.what()<<endl;
+            }
         } else if(choice == 2){ //read
             cout<<"Please enter the page, row, column, direction, and length of the string you want to read (seperated by space):"<<endl;
             cin>>page>>row>>column>>direction>>len;
@@ -39,7 +43,12 @@ int main(){
             } else{
                 dir = Direction::Vertical;
             }
-            notebook.read(page, row, column, dir, len);
+            try{
+                notebook.read(page, row, column, dir, len);
+            }
+            catch(const exception& e){
+                cout<<e.what()<<endl;
+            }
         } else if(choice == 3){ //erase
             cout<<"Please enter the page, row, column, direction, and length of the string you want to erase (seperated by space):"<<endl;
             cin>>page>>row>>column>>direction>>len;
@@ -48,11 +57,21 @@ int main(){
             } else{
                 dir = Direction::Vertical;
             }
-            notebook.erase(page, row, column, dir, len);
+            try{
+                notebook.erase(page, row, column, dir, len);
+            }
+            catch(const exception& e){
+                cout<<e.what()<<endl;
+            }
         } else if(choice == 4){ //show
             cout<<"Please enter the page you want to show:"<<endl;
             cin>>page;
-            notebook.show(page);
+            try{
+                notebook.show(page);
+            }
+            catch(const exception& e){
+                cout<<e.what()<<endl;
+            }
         } else{ //quit
             return 0;
         }
