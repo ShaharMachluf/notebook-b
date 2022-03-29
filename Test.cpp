@@ -34,8 +34,7 @@ TEST_CASE("Bad input"){
     CHECK_THROWS(notebook.write(1, 5, -55, Direction::Horizontal, "abcd"));
     for(int i = 0; i<33 ; i++){ //unprintable chars
         char c = i;
-        string s = "";
-        s += c; 
+        string s = ""+ c;
         CHECK_THROWS(notebook.write(1, 5, 55, Direction::Horizontal, s));
     }
 }

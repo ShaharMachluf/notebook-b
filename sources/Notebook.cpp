@@ -79,12 +79,10 @@ string Notebook::read(int page, int row, int column, Direction direction, int to
     if(direction == Direction::Horizontal){
         //if the key "row" or "page" are not in the map 
         if(this->pages.find(page) == this->pages.end()){
-            cout<<"1"<<endl;
             for(int i = 0; i < to_read; i++){
                 result += '_';
             }
         }else if(this->pages.at(page).find(row) == this->pages.at(page).end()){
-            cout<<"here"<<endl;
             for(int i = 0; i < to_read; i++){
                 result += '_';
             }
