@@ -25,11 +25,19 @@ string nospaces(string input) {
 
 Notebook notebook;
 TEST_CASE("Bad input"){
-    CHECK_THROWS(notebook.write(1, 5, 101, Direction::Horizontal, "abcd"));
-    CHECK_THROWS(notebook.write(1, 5, 99, Direction::Horizontal, "abcd"));
-    CHECK_THROWS(notebook.write(1, 5, 99, Direction::Horizontal, "a\t"));
-    CHECK_THROWS(notebook.write(1, 5, 99, Direction::Horizontal, "a\n"));
-    CHECK_THROWS(notebook.write(1, 5, 55, Direction::Horizontal, "ab~d"));
+    CHECK_THROWS(notebook.write(1, 5, 101, Direction::Horizontal, "abcd"));//start outside the line 
+    CHECK_THROWS(notebook.write(1, 5, 99, Direction::Horizontal, "abcd"));//get outside the line
+    CHECK_THROWS(notebook.write(1, 5, 55, Direction::Horizontal, "ab~d"));//write "~"
+    //negative index
+    CHECK_THROWS(notebook.write(-1, 5, 55, Direction::Horizontal, "abcd"));
+    CHECK_THROWS(notebook.write(1, -5, 55, Direction::Horizontal, "abcd"));
+    CHECK_THROWS(notebook.write(1, 5, -55, Direction::Horizontal, "abcd"));
+    for(int i = 0; i<33 ; i++){ //unprintable chars
+        char c = i;
+        string s = "";
+        s += c; 
+        CHECK_THROWS(notebook.write(1, 5, 55, Direction::Horizontal, s));
+    }
 }
 
 TEST_CASE("Read") {
@@ -52,18 +60,21 @@ TEST_CASE("Read") {
 
 TEST_CASE("Write"){
     notebook.write(1, 5, 5, Direction::Horizontal, "abcd");
+    //write where it's already written
     CHECK_THROWS(notebook.write(1, 5, 5, Direction::Horizontal, "abcd"));
     CHECK_THROWS(notebook.write(1, 5, 2, Direction::Horizontal, "abcd"));
     CHECK_THROWS(notebook.write(1, 5, 8, Direction::Horizontal, "abcd"));
+    //legal
     CHECK_NOTHROW(notebook.write(1, 5, 1, Direction::Horizontal, "abcd"));
     CHECK_NOTHROW(notebook.write(1, 5, 9, Direction::Horizontal, "abcd"));
-    CHECK_THROWS(notebook.write(1, 5, 5, Direction::Vertical, "abcd"));
+    CHECK_THROWS(notebook.write(1, 5, 5, Direction::Vertical, "abcd"));//write where it's already written
     notebook.write(1, 2, 5, Direction::Vertical, "abc");
+    //write where it's already written
     CHECK_THROWS(notebook.write(1, 4, 5, Direction::Horizontal, "abcd"));
     CHECK_THROWS(notebook.write(1, 3, 5, Direction::Horizontal, "abcd"));
     CHECK_THROWS(notebook.write(1, 2, 5, Direction::Horizontal, "abcd"));
     CHECK_THROWS(notebook.write(1, 5, 8, Direction::Horizontal, "abcd"));
-    CHECK_NOTHROW(notebook.write(1, 5, 13, Direction::Horizontal, "abcd"));
+    CHECK_NOTHROW(notebook.write(1, 5, 13, Direction::Horizontal, "abcd"));//legal
 }
 
 TEST_CASE("Erase"){
@@ -75,5 +86,5 @@ TEST_CASE("Erase"){
     notebook.erase(2,3,8, Direction::Vertical,3);
     CHECK(nospaces(notebook.read(2,5,5,Direction::Horizontal,4)) == nospaces("~~~~"));
     CHECK(nospaces(notebook.read(2,3,8, Direction::Vertical,3)) == nospaces("~\n~\n~"));
-    CHECK_THROWS(notebook.write(2,5,5,Direction::Horizontal,"ef"));
+    CHECK_THROWS(notebook.write(2,5,5,Direction::Horizontal,"ef"));//write on erased place
 }

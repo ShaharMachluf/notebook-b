@@ -79,10 +79,12 @@ string Notebook::read(int page, int row, int column, Direction direction, int to
     if(direction == Direction::Horizontal){
         //if the key "row" or "page" are not in the map 
         if(this->pages.find(page) == this->pages.end()){
+            cout<<"1"<<endl;
             for(int i = 0; i < to_read; i++){
                 result += '_';
             }
         }else if(this->pages.at(page).find(row) == this->pages.at(page).end()){
+            cout<<"here"<<endl;
             for(int i = 0; i < to_read; i++){
                 result += '_';
             }
@@ -151,7 +153,7 @@ void Notebook::show(int page) const{
         throw("Page number must be positive");
     }
     int min_width = line_len - 1;
-    int min_hight = UINT16_MAX;
+    int min_hight = INT16_MAX;
     int max_width = line_start;
     int max_hight = line_start;
     string to_show;
@@ -159,21 +161,23 @@ void Notebook::show(int page) const{
         cout<<"_____\n_____\n_____\n_____\n_____"<<endl;
     }
     else{
-        unordered_map<int,vector<char>> m = this->pages.at(page);
+        unordered_map<int,vector<char>> m(this->pages.at(page));
         for(auto i:m){  //find the boundries of the page that are writen
+        cout<<i.first<<endl;
             if(i.first < min_hight){
                 min_hight = i.first;
-            } else if(i.first > max_hight){
+            } if(i.first > max_hight){
                 max_hight = i.first;
             }
             for(int j=line_start; j<line_len;j++){
                 if(i.second.at(unsigned(j)) != '_' && j < min_width){
                     min_width = j;
-                } else if(i.second.at(unsigned(j)) != '_' && j > max_width){
+                } if(i.second.at(unsigned(j)) != '_' && j > max_width){
                     max_width = j;
                 }
             }
         }
+        cout<<max_hight<<min_hight<<min_width<<max_width<<endl;
         for(int i=min_hight;i<=max_hight;i++){  //write to the result string
             to_show += to_string(i) + ": ";
             if(m.find(i) == m.end()){
