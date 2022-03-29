@@ -89,7 +89,7 @@ string Notebook::read(int page, int row, int column, Direction direction, int to
                 result += '_';
             }
         }
-        else{
+        else{//row exist
             for(int i = 0; i< to_read; i++){
                 result.append(1, this->pages.at(page).at(row).at(unsigned(column+i)));
             }
@@ -101,7 +101,7 @@ string Notebook::read(int page, int row, int column, Direction direction, int to
             if(this->pages.find(page) == this->pages.end() || this->pages.at(page).find(row + i) == this->pages.at(page).end()){
                 result += "_";
             
-            }else{
+            }else{//row exist
                 result.append(1, this->pages.at(page).at(row + i).at(unsigned(column)));
             }
         }
